@@ -105,12 +105,17 @@ def file_main_b64(file_bytes: bytes, _key: str, max_dim: int = 1400) -> str:
 
 
 @st.cache_data(show_spinner=False)
-def file_thumb_b64(file_bytes: bytes, _key: str, max_dim: int = 220) -> str:
+def file_settings_thumb_b64(file_bytes: bytes, _key: str,
+                            ox: float, oy: float, zoom: float,
+                            size: int = 200) -> str:
     img = Image.open(io.BytesIO(file_bytes))
-    img = ImageOps.exif_transpose(img)
-    img.thumbnail((max_dim, max_dim))
+    cropped = crop_circle_from_settings(
+        img, {"offset_x": ox, "offset_y": oy, "zoom": zoom}, size=size
+    )
+    bg = Image.new("RGB", cropped.size, (255, 255, 255))
+    bg.paste(cropped, (0, 0), mask=cropped)
     buf = io.BytesIO()
-    img.convert("RGB").save(buf, format="JPEG", quality=80)
+    bg.save(buf, format="JPEG", quality=85)
     return base64.b64encode(buf.getvalue()).decode("ascii")
 
 
@@ -315,20 +320,31 @@ if n_active > 0:
     active_W, active_H = file_dims(current_file.getvalue(), current_file.name)
     active_settings = st.session_state.img_settings[current_file.name]
 
-    side_slots = []
-    for delta in (-2, -1, 1, 2):
+    # Fill slots in priority order (closest first, next before prev) so each
+    # "other" photo appears at most once when the queue has fewer than 5 photos.
+    slot_map = {}
+    used_ni = set()
+    for delta in (1, -1, 2, -2):
         if n_active <= 1:
-            side_slots.append({"delta": delta, "exists": False})
+            slot_map[delta] = {"delta": delta, "exists": False}
             continue
         ni = (current_index + delta) % n_active
-        if ni == current_index:
-            side_slots.append({"delta": delta, "exists": False})
+        if ni == current_index or ni in used_ni:
+            slot_map[delta] = {"delta": delta, "exists": False}
         else:
+            used_ni.add(ni)
             f = active_queue[ni]
-            side_slots.append({
+            s = st.session_state.img_settings.get(
+                f.name, {"offset_x": 0.0, "offset_y": 0.0, "zoom": 1.0}
+            )
+            slot_map[delta] = {
                 "delta": delta, "exists": True, "idx": ni, "name": f.name,
-                "b64": file_thumb_b64(f.getvalue(), f.name),
-            })
+                "b64": file_settings_thumb_b64(
+                    f.getvalue(), f.name,
+                    s["offset_x"], s["offset_y"], s["zoom"],
+                ),
+            }
+    side_slots = [slot_map[d] for d in (-2, -1, 1, 2)]
 
     payload = {
         "circle_size": CIRCLE_SIZE,
