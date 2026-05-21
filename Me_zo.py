@@ -1110,3 +1110,23 @@ if st.session_state.pop("scroll_peek", False):
         </script>""",
         height=0,
     )
+
+
+# ---------------------------------------------------------------------------
+# 📊 Google Analytics Integration
+# ---------------------------------------------------------------------------
+# Replace with your actual Measurement ID from Google Analytics
+GA_ID = "G-DYLZFZV3FX"  
+
+ga_html = f"""
+    <script async src="https://www.googletagmanager.com/gtag/js?id={GA_ID}"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){{dataLayer.push(arguments);}}
+        gtag('js', new Date());
+        gtag('config', '{GA_ID}');
+    </script>
+"""
+
+# Injecting the tracking code invisibly at the bottom of the page
+components.html(ga_html, height=0, width=0)
