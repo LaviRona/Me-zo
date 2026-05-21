@@ -6,7 +6,7 @@ import json
 from html import escape
 import streamlit.components.v1 as components
 
-st.set_page_config(page_title="Best Face Forward", layout="wide")
+st.set_page_config(page_title="Me zo?", layout="wide")
 
 # ---------------------------------------------------------------------------
 # Global CSS — hide the uploader's file list & pagination, etc.
@@ -130,16 +130,23 @@ def pil_to_png_b64(pil_img: Image.Image) -> str:
 # ---------------------------------------------------------------------------
 # Header
 # ---------------------------------------------------------------------------
-st.title("✨ Best Face Forward")
 st.markdown(
-    "<p style='font-size:18px; font-weight:700; color:#FF4B4B; margin:-6px 0 4px 0; letter-spacing:.2px;'>"
+    "<h1 style='font-size:64px; font-weight:800; margin:0 0 10px 0; letter-spacing:-0.5px; line-height:1.05;'>"
+    "✨ Me zo?"
+    "</h1>"
+    "<p style='font-size:26px; font-weight:700; color:#0a66c2; margin:0 0 8px 0; letter-spacing:.2px;'>"
     "Small picture, big deal."
     "</p>"
-    "<p style='font-style:italic; color:#444; margin:0;'>"
+    "<p style='font-style:italic; color:#333; font-size:20px; margin:0;'>"
     "Here to help you choose the best version of yourself.<sup>*</sup>"
     "</p>"
-    "<p style='color:#888; font-size:12px; margin:0;'>"
+    "<p style='color:#888; font-size:16px; margin:4px 0 0 0;'>"
     "* Results limited to whichever face you actually own."
+    "</p>"
+    "<p style='font-size:17px; color:#222; margin:18px 0 0 0; line-height:1.55;'>"
+    "Drop in a few photos, frame each one inside the LinkedIn circle "
+    "(drag to pan, scroll to zoom), shortlist your favourites, and preview "
+    "them on a real-looking profile and post."
     "</p>",
     unsafe_allow_html=True,
 )
@@ -155,11 +162,11 @@ uploaded_files = st.file_uploader(
     label_visibility="collapsed",
 )
 
+st.caption(
+    "🔒 Your photos stay in your browser only — nothing is saved. "
+)
+
 if not uploaded_files:
-    st.info(
-        "🎬 The casting couch is empty. Toss in a few photos above and "
-        "let the audition begin — your future LinkedIn self awaits."
-    )
     st.stop()
 
 # Initialise per-file settings
@@ -377,8 +384,8 @@ html, body { margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFo
     width: __CS__px; height: __CS__px;
     border-radius: 50%; overflow: hidden;
     background: #111; position: relative;
-    border: 5px solid #FF4B4B;
-    box-shadow: 0 0 36px rgba(255, 75, 75, .35);
+    border: 5px solid #0a66c2;
+    box-shadow: 0 0 36px rgba(10, 102, 194, .35);
     cursor: grab; user-select: none; touch-action: none;
 }
 .pp-center.pp-grabbing { cursor: grabbing; }
@@ -418,8 +425,8 @@ html, body { margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFo
     padding: 10px 22px; font-size: 14px; font-weight: 600; cursor: pointer;
     transition: background .15s ease, transform .1s ease, border-color .15s ease;
 }
-.pp-save-btn  { background: #FF4B4B; color: #fff; box-shadow: 0 2px 8px rgba(255,75,75,.3); }
-.pp-save-btn:hover  { background: #ff2c2c; }
+.pp-save-btn  { background: #0a66c2; color: #fff; box-shadow: 0 2px 8px rgba(10,102,194,.3); }
+.pp-save-btn:hover  { background: #084a8e; }
 .pp-save-btn:active { transform: scale(.97); }
 .pp-delete-btn { background: #fff; color: #c0392b; border: 2px solid #c0392b; }
 .pp-delete-btn:hover  { background: #fdecea; }
@@ -784,10 +791,10 @@ body { margin: 0; padding: 10px 4px 6px; font-family: -apple-system, BlinkMacSys
     border: 2px solid #eee; background: #fff; display: block;
 }
 .pp-pick:hover { transform: translateY(-2px); border-color: #aaa; }
-.pp-pick-active { border-color: #FF4B4B; background: rgba(255,75,75,.08); transform: scale(1.05); }
-.pp-pick-active img { border-color: #FF4B4B; }
+.pp-pick-active { border-color: #0a66c2; background: rgba(10,102,194,.08); transform: scale(1.05); }
+.pp-pick-active img { border-color: #0a66c2; }
 .pp-pick-name { font-size: 10px; color: #555; margin-top: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.pp-pick-active .pp-pick-name { color: #FF4B4B; font-weight: 700; }
+.pp-pick-active .pp-pick-name { color: #0a66c2; font-weight: 700; }
 </style></head>
 <body>
 <div class="pp-pick-row">
